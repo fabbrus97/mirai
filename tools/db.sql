@@ -1,3 +1,5 @@
+DROP DATABASE mirai;
+
 CREATE DATABASE mirai;
 
 USE mirai;
