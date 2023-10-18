@@ -26,11 +26,13 @@ int main(int argc, char **args)
     uint32_t total = 0;
     struct telnet_info info;
 
-#ifdef DEBUG
+//#ifdef DEBUG
     addrs_len = 1;
     addrs = calloc(4, sizeof (ipv4_t));
-    addrs[0] = inet_addr("0.0.0.0");
-#else
+    //addrs[0] = inet_addr("0.0.0.0");
+    addrs[0] = inet_addr("172.16.238.12");
+//#else
+#if 0
     addrs_len = 2;
     addrs = calloc(addrs_len, sizeof (ipv4_t));
 
